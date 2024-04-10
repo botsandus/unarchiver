@@ -1,0 +1,234 @@
+require:
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
+  SuggestExtensions: false
+  Include:
+    - '.github/**/*.rb'
+    - '**/*.rb'
+    - '**/*.gemfile'
+    - '**/*.gemspec'
+    - '**/*.rake'
+    - '**/*.ru'
+    - '**/Gemfile'
+    - '**/Rakefile'
+
+  Exclude:
+  <% `git status --ignored --porcelain`.lines.grep(/^!! /).each do |path| %>
+    - <%= path.sub(/^!! /, '').sub(/\/$/, '/**/*') %>
+  <% end %>
+    - bin/*
+    - Rakefile
+
+# Disabled because this requires comments at the top of every file
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+# Disabled because this requires comments for every class
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  AllowedPatterns:
+    - !ruby/regexp /\A#/
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 50
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+
+Style/BlockDelimiters:
+  EnforcedStyle: semantic
+  AllowBracesOnProceduralOneLiners: true
+
+RSpec/NamedSubject:
+  EnforcedStyle: named_only
+
+RSpec/Focus:
+  AutoCorrect: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Metrics/AbcSize:
+  Max: 30
+
+Metrics/BlockLength:
+  Max: 30
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+Metrics/ClassLength:
+  Max: 200
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+Metrics/ModuleLength:
+  Max: 200
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+
+Metrics/CyclomaticComplexity:
+  Max: 15
+
+Metrics/MethodLength:
+  CountAsOne:
+    - array
+    - hash
+    - heredoc
+    - method_call
+  Max: 30
+
+Metrics/PerceivedComplexity:
+  Max: 15
+
+Style/MultilineBlockChain:
+  Enabled: false
+
+Style/ParallelAssignment:
+  Enabled: false
+
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+Lint/UnusedMethodArgument:
+  AutoCorrect: false
+
+RSpec/EmptyExampleGroup:
+  AutoCorrect: false
+
+Lint/UnusedBlockArgument:
+  AutoCorrect: false
+
+RSpec/NestedGroups:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+# Intended to avoid this situation:
+# ```
+# aggregate_yearly_allowance = calculator(month1,
+#                                         month2: fetch_grouped_month_data_for_month(2))
+# ```
+# where we
+# a) dangle code way out there
+# b) sometimes wind up with an odd number of spaces in the indent
+# c) eat up valuable line length
+Layout/ArgumentAlignment:
+  EnforcedStyle: with_fixed_indentation
+
+# Intended to avoid this situation:
+# ```
+# aggregate_yearly_allowance = case month
+#                              when "feb"
+#                                fetch_grouped_month_data_for_month(2)
+# end
+# ```
+# where we
+# a) dangle code way out there
+# b) sometimes wind up with an odd number of spaces in the indent
+# c) eat up valuable line length
+# d) what's with that `end` way off to the left
+Layout/CaseIndentation:
+  EnforcedStyle: end
+
+# Intended to avoid this situation:
+# ```
+# aggregate_yearly_allowance = if month == "feb"
+#                                fetch_grouped_month_data_for_month(2)
+# end
+# ```
+# where we
+# a) dangle code way out there
+# b) sometimes wind up with an odd number of spaces in the indent
+# c) eat up valuable line length
+# d) what's with that `end` way off to the left (for `start_of_line` setting)
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+# Intended to avoid this situation:
+# ```
+# aggregate_yearly_allowance = AllowanceCalculator
+#                                .calculate
+#                                .month("feb")
+#                                .add(fetch_grouped_month_data_for_month(2))
+# ```
+# where we
+# a) dangle code way out there
+# b) sometimes wind up with an odd number of spaces in the indent
+# c) eat up valuable line length
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Intended to avoid enforcing this:
+# ```
+# scan = create(:scan,
+#   started_at: "2023-01-01 12:00",)
+# ```
+# and allow this:
+# ```
+# scan = create(:scan,
+#   started_at: "2023-01-01 12:00",
+# )
+# ```
+#
+# There unfortunately isn't a good setting I can find
+# to stop rubocop -A doing weird things.
+Layout/MultilineMethodCallBraceLayout:
+  Enabled: false
+
+# Double-quotes preferred as default to avoid
+# having to stop and switch between quote types
+# as and when we decide to put an apostrophe in a sentence
+# (especially common when writing test names).
+#
+# There is no performance penalty for using double quotes
+# when there's no interpolation being used.
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+# Enforcing trailing commas in multiline helps keep
+# our github history clean as we don't end up with
+# changes recorded for lines that have only had a
+# comma added or removed.
+#
+# Also makes it easier to reorder lines without having
+# to add or delete commas.
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/EmptyCaseCondition:
+  Enabled: false
+
+Style/Lambda:
+  Enabled: false
+
+# By default rubocop forbids use of any capybara aliases
+# for RSpec methods, and wants you to enable them as desired per-team.
+RSpec/Capybara/FeatureMethods:
+  EnabledMethods:
+    - scenario
